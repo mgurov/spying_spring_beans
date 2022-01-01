@@ -40,7 +40,7 @@ class HigherLevelServiceHappyIT(
     }
 }
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(MockCleaner::class)
 annotation class OurIntegrationTests
 
@@ -74,5 +74,11 @@ class SpyWrappers {
     @Primary
     fun lowLevelServiceSpy(lowLevelService: LowLevelService): LowLevelService {
         return spyk(lowLevelService)
+    }
+
+    @Bean
+    @Primary
+    fun higherLevelServiceSpy(higherLevelService: HigherLevelService): HigherLevelService {
+        return spyk(higherLevelService)
     }
 }
