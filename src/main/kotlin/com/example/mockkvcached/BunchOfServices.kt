@@ -14,8 +14,16 @@ class HigherLevelService(
     private val lowLevelService: LowLevelService,
 ) {
     fun performHigher(input: String): String {
-        return lowLevelService.perform(input + "_1") +
+        return resiliently { lowLevelService.perform(input + "_1") } +
                 " - " +
-                lowLevelService.perform(input + "_2")
+                resiliently { lowLevelService.perform(input + "_2") }
+    }
+
+    private fun resiliently(function: () -> String): String {
+        return try {
+            function()
+        } catch (e: Exception) {
+            return "failed(${e.message})"
+        }
     }
 }

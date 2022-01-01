@@ -46,6 +46,6 @@ class HigherLevelServiceResilienceIT(
         every { lowLevelService.perform("blah_2") } answers {throw RuntimeException("kaboom")}
         val actual = higherLevelService.performHigher("blah")
         //then
-        assertThat(actual).isEqualTo("input(blah_1) - fail(kaboom)")
+        assertThat(actual).isEqualTo("input(blah_1) - failed(kaboom)")
     }
 }
