@@ -16,6 +16,6 @@ class HigherLevelService(
     fun performHigher(input: String): String {
         return lowLevelService.perform(input + "_1") +
                 " - " +
-                lowLevelService.perform(input + "_@")
+                lowLevelService.perform(input + "_2")
     }
 }
