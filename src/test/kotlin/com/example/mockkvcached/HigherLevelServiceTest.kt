@@ -1,5 +1,7 @@
 package com.example.mockkvcached
 
+import com.ninjasquad.springmockk.MockkBean
+import io.mockk.every
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,5 +28,24 @@ class HigherLevelServiceHappyIT(
         val actual = higherLevelService.performHigher("blah")
         //then
         assertThat(actual).isEqualTo("input(blah_1) - input(blah_2)")
+    }
+}
+
+@SpringBootTest
+class HigherLevelServiceResilienceIT(
+    @Autowired val higherLevelService: HigherLevelService
+) {
+
+    @MockkBean
+    private lateinit var lowLevelService: LowLevelService
+
+    @Test
+    fun `happy times`() {
+        //when
+        every { lowLevelService.perform("blah_1") } returns "input(blah_1)"
+        every { lowLevelService.perform("blah_2") } answers {throw RuntimeException("kaboom")}
+        val actual = higherLevelService.performHigher("blah")
+        //then
+        assertThat(actual).isEqualTo("input(blah_1) - fail(kaboom)")
     }
 }
