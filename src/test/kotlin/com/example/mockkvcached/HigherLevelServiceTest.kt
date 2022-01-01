@@ -7,6 +7,9 @@ import io.mockk.spyk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.AfterEachCallback
+import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.extension.ExtensionContext
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Bean
@@ -24,7 +27,7 @@ class HigherLevelServiceHappyTest {
     }
 }
 
-@SpringBootTest
+@OurIntegrationTests
 class HigherLevelServiceHappyIT(
     @Autowired val higherLevelService: HigherLevelService
 ) {
@@ -38,6 +41,10 @@ class HigherLevelServiceHappyIT(
 }
 
 @SpringBootTest
+@ExtendWith(MockCleaner::class)
+annotation class OurIntegrationTests
+
+@OurIntegrationTests
 class HigherLevelServiceResilienceIT(
     @Autowired val higherLevelService: HigherLevelService,
     @Autowired val lowLevelService: LowLevelService,
@@ -52,11 +59,13 @@ class HigherLevelServiceResilienceIT(
         //then
         assertThat(actual).isEqualTo("input(blah_1) - failed(kaboom)")
     }
+}
 
-    @AfterEach
-    fun resetMocks() {
+class MockCleaner: AfterEachCallback {
+    override fun afterEach(context: ExtensionContext?) {
         clearAllMocks()
     }
+
 }
 
 @Configuration
