@@ -1,4 +1,3 @@
+Demoing the use of mock spies to wrap production/stub services
 
-
-[ ] measure the real test time
-[ ] measure the spring startup times
+https://www.youtube.com/watch?v=GbyKyE6hC0M
